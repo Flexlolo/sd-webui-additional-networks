@@ -315,7 +315,7 @@ class LoRANetworkCompvis(torch.nn.Module):
 
         return new_sd
 
-    def __init__(self, text_encoder, unet, multiplier_tenc=1.0, multiplier_unet=1.0, modules_dim=None, modules_alpha=None) -> None:
+    def __init__(self, text_encoder, unet, multiplier_tenc=0.0, multiplier_unet=1.0, modules_dim=None, modules_alpha=None) -> None:
         super().__init__()
         self.multiplier_unet = multiplier_unet
         self.multiplier_tenc = multiplier_tenc
