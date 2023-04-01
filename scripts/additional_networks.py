@@ -55,9 +55,9 @@ class Script(scripts.Script):
                     enabled = gr.Checkbox(label="Enable", value=False)
                     ctrls.append(enabled)
                     self.infotext_fields.append((enabled, "AddNet Enabled"))
-                    separate_weights = gr.Checkbox(label="Separate UNet/Text Encoder weights", value=True)
+                    separate_weights = gr.Checkbox(label="Combine UNet/Text Encoder weights", value=False)
                     ctrls.append(separate_weights)
-                    self.infotext_fields.append((separate_weights, "AddNet Separate Weights"))
+                    self.infotext_fields.append((separate_weights, "AddNet Combine Weights"))
 
                 for i in range(MAX_MODEL_COUNT):
                     with FormRow(variant="compact"):
@@ -120,15 +120,15 @@ class Script(scripts.Script):
                 for _, field_name in self.infotext_fields:
                     self.paste_field_names.append(field_name)
 
-                def update_weight_sliders(separate, *sliders):
+                def update_weight_sliders(combined, *sliders):
                     updates = []
                     for w, w_unet, w_tenc in zip(*(iter(sliders),) * 3):
-                        if not separate:
+                        if combined:
                             w_unet = w
-                            w_tenc = w
-                        updates.append(gr.Slider.update(visible=not separate))  # Combined
-                        updates.append(gr.Slider.update(visible=separate, value=w_unet))  # UNet
-                        updates.append(gr.Slider.update(visible=separate, value=w_tenc))  # TEnc
+                            w_tenc = 0.0 # assume default value
+                        updates.append(gr.Slider.update(visible=combined))  # Combined
+                        updates.append(gr.Slider.update(visible=not combined, value=w_unet))  # UNet
+                        updates.append(gr.Slider.update(visible=not combined, value=w_tenc))  # TEnc
                     return updates
 
                 separate_weights.change(update_weight_sliders, inputs=[separate_weights] + weight_sliders, outputs=weight_sliders)
